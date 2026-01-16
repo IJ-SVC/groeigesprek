@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-montserrat: 'Montserrat', sans-serif;
+}
+
+body {
+  color: #25377f;
+  background: #ffffff;
+}
+
+@layer components {
+  .ijsselheem-card {
+    @apply bg-white rounded-lg shadow-md p-6;
+  }
+  
+  .ijsselheem-button-primary {
+    @apply bg-ijsselheem-accentblauw text-ijsselheem-donkerblauw font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition-opacity;
+  }
+  
+  .ijsselheem-button-secondary {
+    @apply bg-ijsselheem-lichtblauw text-ijsselheem-donkerblauw font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition-opacity;
+  }
+  
+  .ijsselheem-input {
+    @apply border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ijsselheem-accentblauw;
+  }
+}
+
+
