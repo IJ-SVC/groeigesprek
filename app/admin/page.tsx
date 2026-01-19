@@ -200,6 +200,11 @@ export default async function AdminDashboardPage() {
                 Nieuwe sessie aanmaken
               </Button>
             </Link>
+            <Link href="/admin/colleagues/nieuw">
+              <Button variant="secondary" className="w-full mb-2">
+                Nieuwe collega aanmaken
+              </Button>
+            </Link>
             <Link href="/admin/sessies">
               <Button variant="secondary" className="w-full mb-2">
                 Alle sessies bekijken

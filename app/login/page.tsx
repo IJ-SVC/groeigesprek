@@ -132,19 +132,6 @@ export default function AdminLoginPage() {
               {isLoading ? 'Bezig...' : 'Inloggen'}
             </button>
           </form>
-          
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-ijsselheem-donkerblauw mb-2">
-              <strong>Nog geen admin account?</strong>
-            </p>
-            <ol className="text-xs text-ijsselheem-donkerblauw space-y-1 list-decimal list-inside">
-              <li>Ga naar Supabase Dashboard → Authentication → Users</li>
-              <li>Klik op &quot;Add user&quot; → &quot;Create new user&quot;</li>
-              <li>Vul email en wachtwoord in, zet &quot;Auto Confirm User&quot; aan</li>
-              <li>Klik op &quot;Create user&quot;</li>
-              <li>Log hier in met die gegevens</li>
-            </ol>
-          </div>
         </div>
       </div>
     </div>

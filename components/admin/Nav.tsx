@@ -18,6 +18,9 @@ export async function AdminNav() {
               Admin Panel
             </Link>
             <div className="flex space-x-4">
+              <Link href="/" className="hover:text-ijsselheem-lichtblauw transition-colors">
+                Startpagina
+              </Link>
               <Link href="/admin" className="hover:text-ijsselheem-lichtblauw transition-colors">
                 Dashboard
               </Link>
@@ -26,6 +29,9 @@ export async function AdminNav() {
               </Link>
               <Link href="/admin/aanmeldingen" className="hover:text-ijsselheem-lichtblauw transition-colors">
                 Aanmeldingen
+              </Link>
+              <Link href="/admin/colleagues" className="hover:text-ijsselheem-lichtblauw transition-colors">
+                Collega's
               </Link>
               <Link href="/admin/instellingen" className="hover:text-ijsselheem-lichtblauw transition-colors">
                 Instellingen
@@ -50,6 +56,11 @@ export async function AdminNav() {
               <Link href="/admin" className="text-xl font-bold">
                 Admin Panel
               </Link>
+              <div className="flex space-x-4">
+                <Link href="/" className="hover:text-ijsselheem-lichtblauw transition-colors">
+                  Startpagina
+                </Link>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm">Error loading user</span>

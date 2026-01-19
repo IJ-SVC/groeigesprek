@@ -59,4 +59,25 @@ export interface Setting {
   updated_at: string
 }
 
+export interface Colleague {
+  id: string
+  name: string
+  email: string
+  photo_url?: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface IndividualRequest {
+  id: string
+  colleague_id: string
+  requester_email?: string
+  requester_name?: string
+  message: string
+  status: 'pending' | 'accepted' | 'declined'
+  created_at: string
+  colleague?: Colleague
+}
+
 

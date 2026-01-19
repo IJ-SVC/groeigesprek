@@ -259,4 +259,86 @@ CREATE POLICY "Admins can manage settings"
     OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
   );
 
+-- Colleagues table for individual conversation requests
+CREATE TABLE IF NOT EXISTS colleagues_groeigesprek (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  photo_url TEXT,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for colleagues
+CREATE INDEX IF NOT EXISTS idx_colleagues_groeigesprek_email ON colleagues_groeigesprek(email);
+CREATE INDEX IF NOT EXISTS idx_colleagues_groeigesprek_is_active ON colleagues_groeigesprek(is_active);
+
+-- Individual requests table
+CREATE TABLE IF NOT EXISTS individual_requests_groeigesprek (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  colleague_id UUID NOT NULL REFERENCES colleagues_groeigesprek(id) ON DELETE CASCADE,
+  requester_email TEXT,
+  requester_name TEXT,
+  message TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for individual requests
+CREATE INDEX IF NOT EXISTS idx_individual_requests_groeigesprek_colleague_id ON individual_requests_groeigesprek(colleague_id);
+CREATE INDEX IF NOT EXISTS idx_individual_requests_groeigesprek_status ON individual_requests_groeigesprek(status);
+CREATE INDEX IF NOT EXISTS idx_individual_requests_groeigesprek_created_at ON individual_requests_groeigesprek(created_at);
+
+-- Trigger for colleagues updated_at
+DROP TRIGGER IF EXISTS update_colleagues_groeigesprek_updated_at ON colleagues_groeigesprek;
+
+CREATE TRIGGER update_colleagues_groeigesprek_updated_at 
+  BEFORE UPDATE ON colleagues_groeigesprek 
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Enable RLS on new tables
+ALTER TABLE colleagues_groeigesprek ENABLE ROW LEVEL SECURITY;
+ALTER TABLE individual_requests_groeigesprek ENABLE ROW LEVEL SECURITY;
+
+-- Colleagues: Public can view active, Authenticated users can manage
+DROP POLICY IF EXISTS "Active colleagues are viewable by everyone" ON colleagues_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can view all colleagues" ON colleagues_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can manage colleagues" ON colleagues_groeigesprek;
+
+CREATE POLICY "Active colleagues are viewable by everyone"
+  ON colleagues_groeigesprek FOR SELECT
+  USING (is_active = true);
+
+CREATE POLICY "Authenticated users can view all colleagues"
+  ON colleagues_groeigesprek FOR SELECT
+  USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can manage colleagues"
+  ON colleagues_groeigesprek FOR ALL
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+
+-- Individual requests: Anyone can insert, Authenticated users can view/manage
+DROP POLICY IF EXISTS "Anyone can create individual requests" ON individual_requests_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can view individual requests" ON individual_requests_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can manage individual requests" ON individual_requests_groeigesprek;
+
+CREATE POLICY "Anyone can create individual requests"
+  ON individual_requests_groeigesprek FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Authenticated users can view individual requests"
+  ON individual_requests_groeigesprek FOR SELECT
+  USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can manage individual requests"
+  ON individual_requests_groeigesprek FOR UPDATE
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can delete individual requests"
+  ON individual_requests_groeigesprek FOR DELETE
+  USING (auth.role() = 'authenticated');
+
 

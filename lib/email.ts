@@ -169,4 +169,72 @@ export async function sendCancellationEmail(
   }
 }
 
+export async function sendIndividualRequestEmail(
+  to: string,
+  request: {
+    colleague_name: string
+    requester_name?: string
+    requester_email?: string
+    message: string
+  }
+) {
+  try {
+    const enabled = process.env.EMAIL_CONFIRMATION_ENABLED === 'true'
+    if (!enabled) {
+      return
+    }
+
+    const transporter = getTransporter()
+    const requesterInfo = request.requester_name
+      ? `${request.requester_name}${request.requester_email ? ` (${request.requester_email})` : ''}`
+      : request.requester_email || 'Een collega'
+
+    await transporter.sendMail({
+      from: process.env.FROM_EMAIL || 'noreply@ijsselheem.nl',
+      to,
+      subject: `Aanvraag voor ontwikkelgesprek van ${requesterInfo}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Montserrat, Arial, sans-serif; color: #25377f; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background-color: #a1d9f7; padding: 20px; text-align: center; }
+            .content { background-color: #ffffff; padding: 20px; }
+            .message-box { background-color: #f0f0f0; padding: 15px; border-left: 4px solid #a1d9f7; margin: 20px 0; }
+            .reply-info { background-color: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Aanvraag voor ontwikkelgesprek</h1>
+            </div>
+            <div class="content">
+              <p>Beste ${request.colleague_name},</p>
+              <p>Je hebt een aanvraag ontvangen voor een ontwikkelgesprek van ${requesterInfo}.</p>
+              <div class="message-box">
+                <p><strong>Bericht:</strong></p>
+                <p>${request.message.replace(/\n/g, '<br>')}</p>
+              </div>
+              ${request.requester_email ? `
+                <div class="reply-info">
+                  <p><strong>Je kunt reageren door te antwoorden op deze email.</strong></p>
+                  <p>Het email adres van ${request.requester_name || 'de aanvrager'} is: <a href="mailto:${request.requester_email}">${request.requester_email}</a></p>
+                </div>
+              ` : ''}
+              <p>Met vriendelijke groet,<br>IJsselheem</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    })
+  } catch (error) {
+    console.error('Error sending individual request email:', error)
+    // Don't throw - email is optional
+  }
+}
+
 

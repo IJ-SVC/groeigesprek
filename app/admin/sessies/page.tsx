@@ -52,9 +52,6 @@ export default async function SessiesPage() {
           <Link href="/admin/sessies/nieuw">
             <Button>Nieuwe sessie</Button>
           </Link>
-          <Link href="/admin/sessies/bulk">
-            <Button variant="secondary">Bulk aanmaken</Button>
-          </Link>
         </div>
       </div>
 

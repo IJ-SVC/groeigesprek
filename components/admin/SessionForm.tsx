@@ -31,9 +31,46 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const validateTime = (time: string): boolean => {
+    if (!time) return true // Empty is valid for optional fields
+    const timeRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/
+    return timeRegex.test(time)
+  }
+
+  const handleTimeChange = (field: 'start_time' | 'end_time', value: string) => {
+    // Remove any non-digit and colon characters
+    let cleaned = value.replace(/[^\d:]/g, '')
+    
+    // Auto-format as user types (HH:MM)
+    if (cleaned.length <= 2) {
+      setFormData({ ...formData, [field]: cleaned })
+    } else if (cleaned.length <= 4) {
+      // Insert colon after 2 digits
+      const hours = cleaned.slice(0, 2)
+      const minutes = cleaned.slice(2, 4)
+      setFormData({ ...formData, [field]: `${hours}:${minutes}` })
+    } else {
+      // Limit to HH:MM format
+      const hours = cleaned.slice(0, 2)
+      const minutes = cleaned.slice(2, 4)
+      setFormData({ ...formData, [field]: `${hours}:${minutes}` })
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
+    
+    // Validate times
+    if (!validateTime(formData.start_time)) {
+      setErrors({ start_time: 'Voer een geldige tijd in (HH:MM, 24-uurs notatie)' })
+      return
+    }
+    if (formData.end_time && !validateTime(formData.end_time)) {
+      setErrors({ end_time: 'Voer een geldige tijd in (HH:MM, 24-uurs notatie)' })
+      return
+    }
+    
     setIsSubmitting(true)
 
     try {
@@ -72,7 +109,7 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" lang="nl">
       <div>
         <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
           Gesprekstype *
@@ -115,10 +152,23 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
             Starttijd *
           </label>
           <input
-            type="time"
+            type="text"
             value={formData.start_time}
-            onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+            onChange={(e) => handleTimeChange('start_time', e.target.value)}
+            onBlur={(e) => {
+              // Ensure format is correct on blur
+              const value = e.target.value
+              if (value && !validateTime(value)) {
+                setErrors({ ...errors, start_time: 'Voer een geldige tijd in (HH:MM, bijv. 14:30)' })
+              } else {
+                const newErrors = { ...errors }
+                delete newErrors.start_time
+                setErrors(newErrors)
+              }
+            }}
             className="ijsselheem-input w-full"
+            placeholder="HH:MM (bijv. 14:30)"
+            pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$"
             required
           />
           {errors.start_time && (
@@ -132,10 +182,23 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
           Eindtijd (optioneel)
         </label>
         <input
-          type="time"
+          type="text"
           value={formData.end_time}
-          onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
+          onChange={(e) => handleTimeChange('end_time', e.target.value)}
+          onBlur={(e) => {
+            // Ensure format is correct on blur
+            const value = e.target.value
+            if (value && !validateTime(value)) {
+              setErrors({ ...errors, end_time: 'Voer een geldige tijd in (HH:MM, bijv. 16:00)' })
+            } else {
+              const newErrors = { ...errors }
+              delete newErrors.end_time
+              setErrors(newErrors)
+            }
+          }}
           className="ijsselheem-input w-full"
+          placeholder="HH:MM (bijv. 16:00)"
+          pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$"
         />
         {errors.end_time && <p className="text-red-600 text-sm mt-1">{errors.end_time}</p>}
       </div>
