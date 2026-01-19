@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS conversation_types (
 -- Insert default conversation types
 INSERT INTO conversation_types (name, description) VALUES
   ('groepsontwikkelgesprek', 'Groepsontwikkelgesprek'),
-  ('inloopgesprek', 'Inloopgesprek')
+  ('inloopgesprek', 'Inloopgesprek'),
+  ('individueel gesprek', 'Individueel gesprek')
 ON CONFLICT (name) DO NOTHING;
 
 -- Sessions table
@@ -321,8 +322,11 @@ CREATE POLICY "Authenticated users can manage colleagues"
 
 -- Individual requests: Anyone can insert, Authenticated users can view/manage
 DROP POLICY IF EXISTS "Anyone can create individual requests" ON individual_requests_groeigesprek;
+DROP POLICY IF EXISTS "Admins can view all individual requests" ON individual_requests_groeigesprek;
+DROP POLICY IF EXISTS "Admins can manage individual requests" ON individual_requests_groeigesprek;
 DROP POLICY IF EXISTS "Authenticated users can view individual requests" ON individual_requests_groeigesprek;
 DROP POLICY IF EXISTS "Authenticated users can manage individual requests" ON individual_requests_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can delete individual requests" ON individual_requests_groeigesprek;
 
 CREATE POLICY "Anyone can create individual requests"
   ON individual_requests_groeigesprek FOR INSERT
