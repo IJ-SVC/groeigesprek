@@ -174,6 +174,15 @@ CREATE POLICY "Admins can insert sessions"
     OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
   );
 
+CREATE POLICY "Authenticated users can insert individual conversation sessions"
+  ON sessions_groeigesprek FOR INSERT
+  WITH CHECK (
+    auth.role() = 'authenticated'
+    AND conversation_type_id IN (
+      SELECT id FROM conversation_types WHERE name = 'individueel gesprek'
+    )
+  );
+
 CREATE POLICY "Admins can update sessions"
   ON sessions_groeigesprek FOR UPDATE
   USING (

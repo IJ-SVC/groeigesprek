@@ -68,6 +68,8 @@ export async function POST(request: Request) {
 
     if (!individualSession) {
       // Create a placeholder session for this colleague's individual conversations
+      // Note: This might fail due to RLS if user is not authenticated
+      // In that case, we'll skip registration creation but still save the request
       const { data: newSession, error: sessionError } = await supabase
         .from('sessions_groeigesprek')
         .insert({
@@ -84,9 +86,19 @@ export async function POST(request: Request) {
         .single()
 
       if (sessionError) {
-        return NextResponse.json({ error: 'Fout bij aanmaken sessie' }, { status: 500 })
+        // Log the error with details
+        console.error('Error creating session for individual request:', {
+          error: sessionError,
+          message: sessionError.message,
+          code: sessionError.code,
+          details: sessionError.details,
+        })
+        // Don't fail the request, just skip registration creation
+        // The request will still be saved and email will be sent
+        individualSession = null
+      } else {
+        individualSession = newSession
       }
-      individualSession = newSession
     }
 
     // Insert request
@@ -105,8 +117,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: insertError.message }, { status: 500 })
     }
 
-    // Create registration if we have requester email and name
-    if (validated.requester_email && validated.requester_name) {
+    // Create registration if we have requester email, name, and a session
+    if (validated.requester_email && validated.requester_name && individualSession) {
       const cancellationToken = Math.random().toString(36).substring(2, 15) + 
                                 Math.random().toString(36).substring(2, 15)
 
