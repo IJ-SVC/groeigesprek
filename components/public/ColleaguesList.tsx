@@ -27,7 +27,7 @@ export function ColleaguesList({ colleagues }: ColleaguesListProps) {
     return (
       <Card>
         <p className="text-center text-ijsselheem-donkerblauw py-8">
-          Er zijn momenteel geen collega's beschikbaar voor individuele gesprekken.
+          Er zijn momenteel geen collega&apos;s beschikbaar voor individuele gesprekken.
         </p>
       </Card>
     )

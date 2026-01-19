@@ -31,7 +31,7 @@ export async function AdminNav() {
                 Aanmeldingen
               </Link>
               <Link href="/admin/colleagues" className="hover:text-ijsselheem-lichtblauw transition-colors">
-                Collega's
+                Collega&apos;s
               </Link>
               <Link href="/admin/instellingen" className="hover:text-ijsselheem-lichtblauw transition-colors">
                 Instellingen

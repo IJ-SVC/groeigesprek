@@ -19,7 +19,7 @@ export default async function ColleaguesPage() {
     <div className="max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-ijsselheem-donkerblauw">
-          Collega's beheer
+          Collega&apos;s beheer
         </h1>
         <div className="flex gap-4">
           <Link href="/admin/colleagues/nieuw">

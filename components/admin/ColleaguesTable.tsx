@@ -45,7 +45,7 @@ export function ColleaguesTable({ colleagues }: ColleaguesTableProps) {
     return (
       <Card>
         <p className="text-center text-ijsselheem-donkerblauw py-8">
-          Nog geen collega's toegevoegd.
+          Nog geen collega&apos;s toegevoegd.
         </p>
       </Card>
     )
