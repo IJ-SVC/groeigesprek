@@ -141,38 +141,37 @@ CREATE POLICY "Conversation types are viewable by everyone"
   ON conversation_types FOR SELECT
   USING (true);
 
-CREATE POLICY "Conversation types are insertable by admins"
-  ON conversation_types FOR INSERT
-  WITH CHECK (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+DROP POLICY IF EXISTS "Conversation types are insertable by admins" ON conversation_types;
+DROP POLICY IF EXISTS "Authenticated users can insert conversation types" ON conversation_types;
 
--- Sessions: Public can view published sessions, Admin full access
+CREATE POLICY "Authenticated users can insert conversation types"
+  ON conversation_types FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+-- Sessions: Public can view published sessions, Authenticated users full access
 -- Drop existing policies if they exist
 DROP POLICY IF EXISTS "Published sessions are viewable by everyone" ON sessions_groeigesprek;
 DROP POLICY IF EXISTS "Admins can view all sessions" ON sessions_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can view all sessions" ON sessions_groeigesprek;
 DROP POLICY IF EXISTS "Admins can insert sessions" ON sessions_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can insert sessions" ON sessions_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can insert individual conversation sessions" ON sessions_groeigesprek;
 DROP POLICY IF EXISTS "Admins can update sessions" ON sessions_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can update sessions" ON sessions_groeigesprek;
 DROP POLICY IF EXISTS "Admins can delete sessions" ON sessions_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can delete sessions" ON sessions_groeigesprek;
 
 CREATE POLICY "Published sessions are viewable by everyone"
   ON sessions_groeigesprek FOR SELECT
   USING (status = 'published' AND date >= CURRENT_DATE);
 
-CREATE POLICY "Admins can view all sessions"
+CREATE POLICY "Authenticated users can view all sessions"
   ON sessions_groeigesprek FOR SELECT
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Admins can insert sessions"
+CREATE POLICY "Authenticated users can insert sessions"
   ON sessions_groeigesprek FOR INSERT
-  WITH CHECK (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  WITH CHECK (auth.role() = 'authenticated');
 
 CREATE POLICY "Authenticated users can insert individual conversation sessions"
   ON sessions_groeigesprek FOR INSERT
@@ -183,91 +182,73 @@ CREATE POLICY "Authenticated users can insert individual conversation sessions"
     )
   );
 
-CREATE POLICY "Admins can update sessions"
+CREATE POLICY "Authenticated users can update sessions"
   ON sessions_groeigesprek FOR UPDATE
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Admins can delete sessions"
+CREATE POLICY "Authenticated users can delete sessions"
   ON sessions_groeigesprek FOR DELETE
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
--- Registrations: Public can insert, view own (via token), Admin full access
+-- Registrations: Public can insert, view own (via token), Authenticated users full access
 -- Drop existing policies if they exist
 DROP POLICY IF EXISTS "Anyone can register" ON registrations_groeigesprek;
 DROP POLICY IF EXISTS "Admins can view all registrations" ON registrations_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can view all registrations" ON registrations_groeigesprek;
 DROP POLICY IF EXISTS "Admins can delete registrations" ON registrations_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can delete registrations" ON registrations_groeigesprek;
 DROP POLICY IF EXISTS "Admins can update registrations" ON registrations_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can update registrations" ON registrations_groeigesprek;
 
 CREATE POLICY "Anyone can register"
   ON registrations_groeigesprek FOR INSERT
   WITH CHECK (true);
 
-CREATE POLICY "Admins can view all registrations"
+CREATE POLICY "Authenticated users can view all registrations"
   ON registrations_groeigesprek FOR SELECT
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Admins can delete registrations"
+CREATE POLICY "Authenticated users can delete registrations"
   ON registrations_groeigesprek FOR DELETE
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Admins can update registrations"
+CREATE POLICY "Authenticated users can update registrations"
   ON registrations_groeigesprek FOR UPDATE
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
--- Headers: Public can view active, Admin full access
+-- Headers: Public can view active, Authenticated users full access
 -- Drop existing policies if they exist
 DROP POLICY IF EXISTS "Active headers are viewable by everyone" ON headers_groeigesprek;
 DROP POLICY IF EXISTS "Admins can view all headers" ON headers_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can view all headers" ON headers_groeigesprek;
 DROP POLICY IF EXISTS "Admins can manage headers" ON headers_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can manage headers" ON headers_groeigesprek;
 
 CREATE POLICY "Active headers are viewable by everyone"
   ON headers_groeigesprek FOR SELECT
   USING (is_active = true);
 
-CREATE POLICY "Admins can view all headers"
+CREATE POLICY "Authenticated users can view all headers"
   ON headers_groeigesprek FOR SELECT
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Admins can manage headers"
+CREATE POLICY "Authenticated users can manage headers"
   ON headers_groeigesprek FOR ALL
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
--- Settings: Public can view, Admin full access
+-- Settings: Public can view, Authenticated users full access
 -- Drop existing policies if they exist
 DROP POLICY IF EXISTS "Settings are viewable by everyone" ON settings_groeigesprek;
 DROP POLICY IF EXISTS "Admins can manage settings" ON settings_groeigesprek;
+DROP POLICY IF EXISTS "Authenticated users can manage settings" ON settings_groeigesprek;
 
 CREATE POLICY "Settings are viewable by everyone"
   ON settings_groeigesprek FOR SELECT
   USING (true);
 
-CREATE POLICY "Admins can manage settings"
+CREATE POLICY "Authenticated users can manage settings"
   ON settings_groeigesprek FOR ALL
-  USING (
-    (auth.jwt() ->> 'user_metadata')::jsonb->>'role' = 'admin'
-    OR (auth.jwt() ->> 'user_metadata')::jsonb->>'is_admin' = 'true'
-  );
+  USING (auth.role() = 'authenticated');
 
 -- Colleagues table for individual conversation requests
 CREATE TABLE IF NOT EXISTS colleagues_groeigesprek (

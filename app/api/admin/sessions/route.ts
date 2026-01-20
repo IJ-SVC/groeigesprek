@@ -64,12 +64,29 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const validated = sessionSchema.parse(body)
+    console.log('Received request body:', body)
+
+    let validated
+    try {
+      validated = sessionSchema.parse(body)
+      console.log('Validated data:', validated)
+    } catch (validationError: any) {
+      console.error('Validation error:', validationError)
+      if (validationError.name === 'ZodError') {
+        return NextResponse.json(
+          { error: 'Ongeldige gegevens', errors: validationError.errors },
+          { status: 400 }
+        )
+      }
+      throw validationError
+    }
 
     const supabase = await createClient()
     const {
       data: { user },
     } = await supabase.auth.getUser()
+
+    console.log('Creating session with data:', { ...validated, created_by: user?.id })
 
     const { data: session, error } = await supabase
       .from('sessions_groeigesprek')
@@ -84,19 +101,19 @@ export async function POST(request: Request) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json(session, { status: 201 })
-  } catch (error: any) {
-    if (error.name === 'ZodError') {
+      console.error('Database error:', error)
       return NextResponse.json(
-        { error: 'Ongeldige gegevens', errors: error.errors },
-        { status: 400 }
+        { error: error.message, details: error.details, hint: error.hint },
+        { status: 500 }
       )
     }
+
+    console.log('Session created successfully:', session)
+    return NextResponse.json(session, { status: 201 })
+  } catch (error: any) {
+    console.error('Unexpected error:', error)
     return NextResponse.json(
-      { error: 'Er is een fout opgetreden' },
+      { error: 'Er is een fout opgetreden', details: error.message },
       { status: 500 }
     )
   }

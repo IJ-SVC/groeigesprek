@@ -7,6 +7,12 @@ export const registrationSchema = z.object({
   department: z.string().min(2, 'Afdeling moet minimaal 2 tekens bevatten'),
 })
 
+// Helper to transform empty strings to undefined
+const emptyStringToUndefined = z.preprocess((val) => {
+  if (val === '' || val === null) return undefined
+  return val
+}, z.string().optional())
+
 export const sessionSchema = z.object({
   conversation_type_id: z.string().uuid('Ongeldig gesprekstype'),
   date: z.string().refine((date) => {
@@ -16,17 +22,26 @@ export const sessionSchema = z.object({
     return d >= today
   }, 'Datum moet vandaag of in de toekomst zijn'),
   start_time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, 'Ongeldig tijdformaat (HH:MM)'),
-  end_time: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, 'Ongeldig tijdformaat (HH:MM)').optional(),
+  end_time: z.preprocess((val) => {
+    if (val === '' || val === null) return undefined
+    return val
+  }, z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, 'Ongeldig tijdformaat (HH:MM)').optional()),
   location: z.string().min(2, 'Locatie moet minimaal 2 tekens bevatten'),
   is_online: z.boolean().default(false),
-  teams_link: z.string().url('Ongeldige URL').optional(),
+  teams_link: z.preprocess((val) => {
+    if (val === '' || val === null) return undefined
+    return val
+  }, z.string().url('Ongeldige URL').optional()),
   facilitator: z.string().min(2, 'Begeleider moet minimaal 2 tekens bevatten'),
-  facilitator_user_id: z.string().uuid('Ongeldige gebruiker ID').optional(),
+  facilitator_user_id: z.preprocess((val) => {
+    if (val === '' || val === null) return undefined
+    return val
+  }, z.string().uuid('Ongeldige gebruiker ID').optional()),
   max_participants: z.number().int().min(1, 'Minimaal 1 deelnemer vereist'),
   status: z.enum(['draft', 'published', 'cancelled']).default('draft'),
-  target_audience: z.string().optional(),
-  notes: z.string().optional(),
-  instructions: z.string().optional(),
+  target_audience: emptyStringToUndefined,
+  notes: emptyStringToUndefined,
+  instructions: emptyStringToUndefined,
 }).refine((data) => {
   if (data.is_online && !data.teams_link) {
     return false

@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import DatePicker from 'react-datepicker'
+import { nl } from 'date-fns/locale'
 import { Button } from '@/components/shared/Button'
 import { ConversationTypeRecord } from '@/types'
 
@@ -49,6 +51,40 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
     }
   }
 
+  // Convert date string (YYYY-MM-DD) to Date object
+  const parseDateString = (dateString: string): Date | null => {
+    if (!dateString) return null
+    const date = new Date(dateString + 'T00:00:00')
+    return isNaN(date.getTime()) ? null : date
+  }
+
+  // Format date for display (DD-MM-YYYY)
+  const formatDateForDisplay = (date: Date | null): string => {
+    if (!date) return ''
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    return `${day}-${month}-${year}`
+  }
+
+  // Handle date change from date picker
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      // Format as YYYY-MM-DD for storage
+      const year = date.getFullYear()
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const day = date.getDate().toString().padStart(2, '0')
+      const dateString = `${year}-${month}-${day}`
+      setFormData({ ...formData, date: dateString })
+      // Clear any errors for this field
+      const newErrors = { ...errors }
+      delete newErrors.date
+      setErrors(newErrors)
+    } else {
+      setFormData({ ...formData, date: '' })
+    }
+  }
+
   // Handle time change from dropdowns
   const handleTimeSelect = (field: 'start_time' | 'end_time', hours: string, minutes: string) => {
     if (hours && minutes) {
@@ -67,6 +103,12 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
     e.preventDefault()
     setErrors({})
     
+    // Validate date (should always be valid with date picker, but check anyway)
+    if (!formData.date || !formData.date.includes('-')) {
+      setErrors({ date: 'Selecteer een datum' })
+      return
+    }
+    
     // Validate times (should always be valid with dropdowns, but check anyway)
     if (!formData.start_time || !formData.start_time.includes(':')) {
       setErrors({ start_time: 'Selecteer een starttijd' })
@@ -74,6 +116,20 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
     }
     if (formData.end_time && !formData.end_time.includes(':')) {
       setErrors({ end_time: 'Selecteer een geldige eindtijd' })
+      return
+    }
+    
+    // Validate required fields
+    if (!formData.conversation_type_id) {
+      setErrors({ conversation_type_id: 'Selecteer een gesprekstype' })
+      return
+    }
+    if (!formData.location || formData.location.trim().length < 2) {
+      setErrors({ location: 'Locatie moet minimaal 2 tekens bevatten' })
+      return
+    }
+    if (!formData.facilitator || formData.facilitator.trim().length < 2) {
+      setErrors({ facilitator: 'Begeleider moet minimaal 2 tekens bevatten' })
       return
     }
     
@@ -85,30 +141,69 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
         : '/api/admin/sessions'
       const method = session ? 'PUT' : 'POST'
 
+      // Prepare data for submission - ensure date is in YYYY-MM-DD format
+      // Convert empty strings to undefined for optional fields
+      const submitData = {
+        ...formData,
+        date: formData.date, // Already in YYYY-MM-DD format from handleDateChange
+        max_participants: Number(formData.max_participants) || 10,
+        is_online: Boolean(formData.is_online),
+        // Convert empty strings to undefined for optional fields
+        teams_link: formData.teams_link?.trim() || undefined,
+        facilitator_user_id: formData.facilitator_user_id?.trim() || undefined,
+        end_time: formData.end_time?.trim() || undefined,
+        target_audience: formData.target_audience?.trim() || undefined,
+        notes: formData.notes?.trim() || undefined,
+        instructions: formData.instructions?.trim() || undefined,
+      }
+
+      console.log('Submitting form data:', submitData)
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       })
 
-      const data = await response.json()
+      let data
+      try {
+        data = await response.json()
+      } catch (parseError) {
+        console.error('Failed to parse response:', parseError)
+        const text = await response.text()
+        console.error('Response text:', text)
+        setErrors({ submit: 'Er is een fout opgetreden bij het verwerken van de response' })
+        setIsSubmitting(false)
+        return
+      }
+
+      console.log('Response status:', response.status)
+      console.log('Response data:', data)
 
       if (!response.ok) {
-        if (data.errors) {
-          setErrors(data.errors.reduce((acc: any, err: any) => {
-            acc[err.path[0]] = err.message
+        console.error('Error response:', data)
+        if (data.errors && Array.isArray(data.errors)) {
+          const errorMap = data.errors.reduce((acc: any, err: any) => {
+            const field = err.path?.[0] || err.field || 'submit'
+            acc[field] = err.message || err.msg || 'Ongeldige waarde'
             return acc
-          }, {}))
+          }, {})
+          console.log('Validation errors:', errorMap)
+          setErrors(errorMap)
+        } else if (data.error) {
+          setErrors({ submit: data.error })
         } else {
-          setErrors({ submit: data.error || 'Er is een fout opgetreden' })
+          setErrors({ submit: 'Er is een fout opgetreden' })
         }
         setIsSubmitting(false)
         return
       }
 
+      console.log('Session created successfully:', data)
       router.push('/admin/sessies')
       router.refresh()
     } catch (error) {
+      console.error('Error submitting form:', error)
       setErrors({ submit: 'Er is een fout opgetreden. Probeer het opnieuw.' })
       setIsSubmitting(false)
     }
@@ -143,12 +238,18 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
           <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
             Datum *
           </label>
-          <input
-            type="date"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          <DatePicker
+            selected={parseDateString(formData.date)}
+            onChange={handleDateChange}
+            dateFormat="dd-MM-yyyy"
+            locale={nl}
             className="ijsselheem-input w-full"
             required
+            minDate={new Date()}
+            showPopperArrow={false}
+            calendarStartDay={1}
+            todayButton="Vandaag"
+            clearButtonTitle="Wissen"
           />
           {errors.date && <p className="text-red-600 text-sm mt-1">{errors.date}</p>}
         </div>
