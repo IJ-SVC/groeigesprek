@@ -31,29 +31,35 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const validateTime = (time: string): boolean => {
-    if (!time) return true // Empty is valid for optional fields
-    const timeRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/
-    return timeRegex.test(time)
+  // Generate hours (00-23)
+  const hours = Array.from({ length: 24 }, (_, i) => 
+    i.toString().padStart(2, '0')
+  )
+
+  // Generate minutes (00, 15, 30, 45)
+  const minutes = ['00', '15', '30', '45']
+
+  // Parse time string to hours and minutes
+  const parseTime = (time: string) => {
+    if (!time) return { hours: '', minutes: '' }
+    const parts = time.split(':')
+    return {
+      hours: parts[0] || '',
+      minutes: parts[1] || '',
+    }
   }
 
-  const handleTimeChange = (field: 'start_time' | 'end_time', value: string) => {
-    // Remove any non-digit and colon characters
-    let cleaned = value.replace(/[^\d:]/g, '')
-    
-    // Auto-format as user types (HH:MM)
-    if (cleaned.length <= 2) {
-      setFormData({ ...formData, [field]: cleaned })
-    } else if (cleaned.length <= 4) {
-      // Insert colon after 2 digits
-      const hours = cleaned.slice(0, 2)
-      const minutes = cleaned.slice(2, 4)
-      setFormData({ ...formData, [field]: `${hours}:${minutes}` })
+  // Handle time change from dropdowns
+  const handleTimeSelect = (field: 'start_time' | 'end_time', hours: string, minutes: string) => {
+    if (hours && minutes) {
+      const time = `${hours}:${minutes}`
+      setFormData({ ...formData, [field]: time })
+      // Clear any errors for this field
+      const newErrors = { ...errors }
+      delete newErrors[field]
+      setErrors(newErrors)
     } else {
-      // Limit to HH:MM format
-      const hours = cleaned.slice(0, 2)
-      const minutes = cleaned.slice(2, 4)
-      setFormData({ ...formData, [field]: `${hours}:${minutes}` })
+      setFormData({ ...formData, [field]: '' })
     }
   }
 
@@ -61,13 +67,13 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
     e.preventDefault()
     setErrors({})
     
-    // Validate times
-    if (!validateTime(formData.start_time)) {
-      setErrors({ start_time: 'Voer een geldige tijd in (HH:MM, 24-uurs notatie)' })
+    // Validate times (should always be valid with dropdowns, but check anyway)
+    if (!formData.start_time || !formData.start_time.includes(':')) {
+      setErrors({ start_time: 'Selecteer een starttijd' })
       return
     }
-    if (formData.end_time && !validateTime(formData.end_time)) {
-      setErrors({ end_time: 'Voer een geldige tijd in (HH:MM, 24-uurs notatie)' })
+    if (formData.end_time && !formData.end_time.includes(':')) {
+      setErrors({ end_time: 'Selecteer een geldige eindtijd' })
       return
     }
     
@@ -151,26 +157,40 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
           <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
             Starttijd *
           </label>
-          <input
-            type="text"
-            value={formData.start_time}
-            onChange={(e) => handleTimeChange('start_time', e.target.value)}
-            onBlur={(e) => {
-              // Ensure format is correct on blur
-              const value = e.target.value
-              if (value && !validateTime(value)) {
-                setErrors({ ...errors, start_time: 'Voer een geldige tijd in (HH:MM, bijv. 14:30)' })
-              } else {
-                const newErrors = { ...errors }
-                delete newErrors.start_time
-                setErrors(newErrors)
-              }
-            }}
-            className="ijsselheem-input w-full"
-            placeholder="HH:MM (bijv. 14:30)"
-            pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$"
-            required
-          />
+          <div className="flex gap-2">
+            <select
+              value={parseTime(formData.start_time).hours}
+              onChange={(e) => {
+                const currentMinutes = parseTime(formData.start_time).minutes || '00'
+                handleTimeSelect('start_time', e.target.value, currentMinutes)
+              }}
+              className="ijsselheem-input flex-1"
+              required
+            >
+              <option value="">Uur</option>
+              {hours.map((hour) => (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              ))}
+            </select>
+            <select
+              value={parseTime(formData.start_time).minutes}
+              onChange={(e) => {
+                const currentHours = parseTime(formData.start_time).hours || '00'
+                handleTimeSelect('start_time', currentHours, e.target.value)
+              }}
+              className="ijsselheem-input flex-1"
+              required
+            >
+              <option value="">Min</option>
+              {minutes.map((minute) => (
+                <option key={minute} value={minute}>
+                  {minute}
+                </option>
+              ))}
+            </select>
+          </div>
           {errors.start_time && (
             <p className="text-red-600 text-sm mt-1">{errors.start_time}</p>
           )}
@@ -181,25 +201,38 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
         <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
           Eindtijd (optioneel)
         </label>
-        <input
-          type="text"
-          value={formData.end_time}
-          onChange={(e) => handleTimeChange('end_time', e.target.value)}
-          onBlur={(e) => {
-            // Ensure format is correct on blur
-            const value = e.target.value
-            if (value && !validateTime(value)) {
-              setErrors({ ...errors, end_time: 'Voer een geldige tijd in (HH:MM, bijv. 16:00)' })
-            } else {
-              const newErrors = { ...errors }
-              delete newErrors.end_time
-              setErrors(newErrors)
-            }
-          }}
-          className="ijsselheem-input w-full"
-          placeholder="HH:MM (bijv. 16:00)"
-          pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$"
-        />
+        <div className="flex gap-2">
+          <select
+            value={parseTime(formData.end_time).hours}
+            onChange={(e) => {
+              const currentMinutes = parseTime(formData.end_time).minutes || '00'
+              handleTimeSelect('end_time', e.target.value, currentMinutes)
+            }}
+            className="ijsselheem-input flex-1"
+          >
+            <option value="">Uur</option>
+            {hours.map((hour) => (
+              <option key={hour} value={hour}>
+                {hour}
+              </option>
+            ))}
+          </select>
+          <select
+            value={parseTime(formData.end_time).minutes}
+            onChange={(e) => {
+              const currentHours = parseTime(formData.end_time).hours || '00'
+              handleTimeSelect('end_time', currentHours, e.target.value)
+            }}
+            className="ijsselheem-input flex-1"
+          >
+            <option value="">Min</option>
+            {minutes.map((minute) => (
+              <option key={minute} value={minute}>
+                {minute}
+              </option>
+            ))}
+          </select>
+        </div>
         {errors.end_time && <p className="text-red-600 text-sm mt-1">{errors.end_time}</p>}
       </div>
 
