@@ -2,7 +2,7 @@
 
 ## Overzicht
 
-Het groeigesprekken aanmeldsysteem is volledig geïmplementeerd volgens de PRD specificaties. Het systeem biedt functionaliteit voor medewerkers om zich aan te melden voor groepsontwikkelgesprekken en inloopgesprekken, en voor admins om sessies te beheren.
+Het groeigesprekken aanmeldsysteem is volledig geïmplementeerd volgens de PRD specificaties. Het systeem biedt functionaliteit voor medewerkers om zich aan te melden voor ontwikkelgesprekken in groepsvorm en ontwikkelgesprekken – spelwerkvorm (individueel), en voor admins om sessies te beheren.
 
 ## Voltooide Functionaliteit
 
@@ -22,7 +22,7 @@ Het groeigesprekken aanmeldsysteem is volledig geïmplementeerd volgens de PRD s
 
 ### ✅ Publieke Pagina's
 - Startpagina met type keuze
-- Sessie overzichten per type (groepsontwikkelgesprek/inloopgesprek)
+- Sessie overzichten per type (ontwikkelgesprek in groepsvorm/ontwikkelgesprek – spelwerkvorm (individueel))
 - Inschrijfformulier met validatie
 - Bevestigingspagina
 - Annuleer pagina met cut-off tijd check

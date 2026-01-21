@@ -13,7 +13,7 @@ interface RequestModalProps {
 export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) {
   const [requesterName, setRequesterName] = useState('')
   const [requesterEmail, setRequesterEmail] = useState('')
-  const [message, setMessage] = useState('Ik wil graag een ontwikkelgesprek met jou inplannen.')
+  const [message, setMessage] = useState('Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -53,7 +53,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
         setSuccess(false)
         setRequesterName('')
         setRequesterEmail('')
-        setMessage('Ik wil graag een ontwikkelgesprek met jou inplannen.')
+        setMessage('Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.')
       }, 2000)
     } catch (err) {
       setError('Er is een fout opgetreden. Probeer het opnieuw.')
@@ -162,7 +162,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
                   className="ijsselheem-input w-full"
                   rows={6}
                   required
-                  placeholder="Ik wil graag een ontwikkelgesprek met jou inplannen."
+                  placeholder="Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast."
                 />
               </div>
 

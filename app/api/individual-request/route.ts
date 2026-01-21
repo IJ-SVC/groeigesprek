@@ -45,7 +45,7 @@ export async function POST(request: Request) {
         .from('conversation_types')
         .insert({
           name: 'individueel gesprek',
-          description: 'Individueel gesprek',
+          description: 'Individueel ontwikkelgesprek',
         })
         .select()
         .single()
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
           conversation_type_id: individualType.id,
           date: new Date().toISOString().split('T')[0], // Today's date as placeholder
           start_time: '00:00:00',
-          location: `Individueel gesprek met ${colleague.name}`,
+          location: `Individueel ontwikkelgesprek met ${colleague.name}`,
           facilitator: colleague.name,
           max_participants: 999, // High limit for individual conversations
           status: 'published',
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
           session_id: individualSession.id,
           email: validated.requester_email,
           name: validated.requester_name,
-          department: 'Individueel gesprek', // Default department for individual conversations
+          department: 'Individueel ontwikkelgesprek', // Default department for individual conversations
           cancellation_token: cancellationToken,
         })
 

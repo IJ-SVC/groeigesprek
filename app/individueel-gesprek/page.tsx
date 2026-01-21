@@ -28,10 +28,10 @@ export default async function IndividueelGesprekPage() {
 
           <Card className="mb-8">
             <h1 className="text-4xl font-extrabold text-ijsselheem-donkerblauw mb-4">
-              Individueel gesprek
+              Individueel ontwikkelgesprek
             </h1>
             <p className="text-lg text-ijsselheem-donkerblauw">
-              Kies een collega om een ontwikkelgesprek aan te vragen
+              Vraag een individueel ontwikkelgesprek aan
             </p>
           </Card>
 

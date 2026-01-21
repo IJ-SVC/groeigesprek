@@ -181,11 +181,11 @@ export default async function AdminDashboardPage() {
           </h2>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span>Groepsontwikkelgesprek:</span>
+              <span>Ontwikkelgesprek in groepsvorm:</span>
               <span className="font-bold">{typeCounts['groepsontwikkelgesprek'] || 0}</span>
             </div>
             <div className="flex justify-between">
-              <span>Inloopgesprek:</span>
+              <span>Ontwikkelgesprek – spelwerkvorm (individueel):</span>
               <span className="font-bold">{typeCounts['inloopgesprek'] || 0}</span>
             </div>
           </div>

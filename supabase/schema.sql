@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS conversation_types (
 
 -- Insert default conversation types
 INSERT INTO conversation_types (name, description) VALUES
-  ('groepsontwikkelgesprek', 'Groepsontwikkelgesprek'),
-  ('inloopgesprek', 'Inloopgesprek'),
-  ('individueel gesprek', 'Individueel gesprek')
+  ('groepsontwikkelgesprek', 'Ontwikkelgesprek in groepsvorm'),
+  ('inloopgesprek', 'Ontwikkelgesprek – spelwerkvorm (individueel)'),
+  ('individueel gesprek', 'Individueel ontwikkelgesprek')
 ON CONFLICT (name) DO NOTHING;
 
 -- Sessions table

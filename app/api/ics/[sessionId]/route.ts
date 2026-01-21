@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { formatConversationTypeName } from '@/lib/utils'
 
 export async function GET(
   request: Request,
@@ -28,6 +29,18 @@ export async function GET(
       ? new Date(`${session.date}T${session.end_time}`)
       : new Date(startDateTime.getTime() + 60 * 60 * 1000) // Default 1 hour
 
+    // Format description with proper escaping for ICS
+    const descriptionParts = [
+      `Begeleider: ${session.facilitator}`,
+      session.instructions ? session.instructions : null,
+    ].filter(Boolean)
+    const description = descriptionParts.join('\\n\\n').replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n')
+
+    // Format summary with proper escaping
+    const summary = (formatConversationTypeName(session.conversation_type?.name) || 'Groeigesprek')
+      .replace(/,/g, '\\,')
+      .replace(/;/g, '\\;')
+
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -39,9 +52,9 @@ export async function GET(
       `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
       `DTSTART:${startDateTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
       `DTEND:${endDateTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
-      `SUMMARY:${session.conversation_type?.name || 'Groeigesprek'}`,
-      `DESCRIPTION:Begeleider: ${session.facilitator}${session.instructions ? `\\n\\n${session.instructions}` : ''}`,
-      `LOCATION:${session.is_online ? 'Online (Teams)' : session.location}`,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${description}`,
+      `LOCATION:${session.is_online ? 'Online (Teams)' : session.location.replace(/,/g, '\\,').replace(/;/g, '\\;')}`,
       session.is_online && session.teams_link ? `URL:${session.teams_link}` : '',
       'BEGIN:VALARM',
       'TRIGGER:-PT15M',

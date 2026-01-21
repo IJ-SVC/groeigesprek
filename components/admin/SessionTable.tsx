@@ -39,6 +39,14 @@ export function SessionTable({ sessions }: SessionTableProps) {
     }
   }
 
+  const formatConversationTypeName = (name: string | undefined): string => {
+    if (!name) return 'Onbekend'
+    if (name === 'individueel gesprek') return 'Individueel ontwikkelgesprek'
+    if (name === 'groepsontwikkelgesprek') return 'Ontwikkelgesprek in groepsvorm'
+    if (name === 'inloopgesprek') return 'Ontwikkelgesprek – spelwerkvorm (individueel)'
+    return name
+  }
+
   if (sessions.length === 0) {
     return (
       <Card>
@@ -63,8 +71,9 @@ export function SessionTable({ sessions }: SessionTableProps) {
               className="ijsselheem-input w-full"
             >
               <option value="all">Alle types</option>
-              <option value="groepsontwikkelgesprek">Groepsontwikkelgesprek</option>
-              <option value="inloopgesprek">Inloopgesprek</option>
+              <option value="groepsontwikkelgesprek">Ontwikkelgesprek in groepsvorm</option>
+              <option value="inloopgesprek">Ontwikkelgesprek – spelwerkvorm (individueel)</option>
+              <option value="individueel gesprek">Individueel ontwikkelgesprek</option>
             </select>
           </div>
           <div>
@@ -104,7 +113,7 @@ export function SessionTable({ sessions }: SessionTableProps) {
                 <tr key={session.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="py-3 px-4">
                     <Badge variant="info">
-                      {session.conversation_type?.name || 'Onbekend'}
+                      {formatConversationTypeName(session.conversation_type?.name)}
                     </Badge>
                   </td>
                   <td className="py-3 px-4 text-sm">

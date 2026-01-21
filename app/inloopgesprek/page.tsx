@@ -73,16 +73,16 @@ export default async function InloopgesprekPage() {
 
           <Card className="mb-8">
             <h1 className="text-4xl font-extrabold text-ijsselheem-donkerblauw mb-4">
-              Inloopgesprek
+              Ontwikkelgesprek – spelwerkvorm (individueel)
             </h1>
             <p className="text-lg text-ijsselheem-donkerblauw">
-              Kies een sessie om je aan te melden
+              Ga actief en in beweging in gesprek over jouw ontwikkeling. Kies een geschikte tijd en locatie en meld je aan.
             </p>
           </Card>
 
           <SessionList
             sessions={sessionsWithCounts}
-            conversationTypeName="Inloopgesprek"
+            conversationTypeName="Ontwikkelgesprek – spelwerkvorm (individueel)"
           />
         </div>
       </div>

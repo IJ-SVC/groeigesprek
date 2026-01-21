@@ -16,15 +16,11 @@ interface RegistrationTableProps {
 export function RegistrationTable({ registrations, sessions }: RegistrationTableProps) {
   const router = useRouter()
   const [filterType, setFilterType] = useState<string>('all')
-  const [filterSession, setFilterSession] = useState<string>('all')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [deleting, setDeleting] = useState<string | null>(null)
 
   const filtered = registrations.filter((reg) => {
     if (filterType !== 'all' && reg.session?.conversation_type?.name !== filterType) {
-      return false
-    }
-    if (filterSession !== 'all' && reg.session_id !== filterSession) {
       return false
     }
     if (filterStatus !== 'all' && reg.status !== filterStatus) {
@@ -70,10 +66,18 @@ export function RegistrationTable({ registrations, sessions }: RegistrationTable
     }
   }
 
+  const formatConversationTypeName = (name: string | undefined): string => {
+    if (!name) return 'Onbekend'
+    if (name === 'individueel gesprek') return 'Individueel ontwikkelgesprek'
+    if (name === 'groepsontwikkelgesprek') return 'Ontwikkelgesprek in groepsvorm'
+    if (name === 'inloopgesprek') return 'Ontwikkelgesprek – spelwerkvorm (individueel)'
+    return name
+  }
+
   return (
     <div>
       <Card className="mb-6">
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
               Filter op type
@@ -84,25 +88,9 @@ export function RegistrationTable({ registrations, sessions }: RegistrationTable
               className="ijsselheem-input w-full"
             >
               <option value="all">Alle types</option>
-              <option value="groepsontwikkelgesprek">Groepsontwikkelgesprek</option>
-              <option value="inloopgesprek">Inloopgesprek</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
-              Filter op sessie
-            </label>
-            <select
-              value={filterSession}
-              onChange={(e) => setFilterSession(e.target.value)}
-              className="ijsselheem-input w-full"
-            >
-              <option value="all">Alle sessies</option>
-              {sessions.map((session) => (
-                <option key={session.id} value={session.id}>
-                  {session.conversation_type?.name} - {formatDate(session.date)} {formatTime(session.start_time)}
-                </option>
-              ))}
+              <option value="groepsontwikkelgesprek">Ontwikkelgesprek in groepsvorm</option>
+              <option value="inloopgesprek">Ontwikkelgesprek – spelwerkvorm (individueel)</option>
+              <option value="individueel gesprek">Individueel ontwikkelgesprek</option>
             </select>
           </div>
           <div>
@@ -161,7 +149,7 @@ export function RegistrationTable({ registrations, sessions }: RegistrationTable
                     {new Date(reg.created_at).toLocaleString('nl-NL')}
                   </td>
                   <td className="py-3 px-4 text-sm">
-                    {reg.session?.conversation_type?.name || 'Onbekend'}
+                    {formatConversationTypeName(reg.session?.conversation_type?.name)}
                   </td>
                   <td className="py-3 px-4 text-sm">
                     {reg.session ? (

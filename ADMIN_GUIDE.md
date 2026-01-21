@@ -59,7 +59,7 @@
 3. Klik op **Nieuwe sessie** knop
 
 4. Vul het formulier in:
-   - **Gesprekstype**: Kies tussen Groepsontwikkelgesprek of Inloopgesprek
+   - **Gesprekstype**: Kies tussen Ontwikkelgesprek in groepsvorm of Ontwikkelgesprek – spelwerkvorm (individueel)
    - **Datum**: Selecteer de datum
    - **Starttijd**: Kies de starttijd
    - **Eindtijd**: (Optioneel) Kies de eindtijd

@@ -25,13 +25,13 @@ export function TypeSelector() {
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-ijsselheem-donkerblauw mb-4">
-                  Groepsontwikkelgesprek
+                  Ontwikkelgesprek in groepsvorm
                 </h2>
                 <p className="text-ijsselheem-donkerblauw mb-6 flex-grow">
-                  Meld je aan voor een groepsontwikkelgesprek
+                  Ga samen met collega&apos;s in gesprek en leer van elkaar
                 </p>
                 <Button className="w-full bg-ijsselheem-accentblauw hover:bg-ijsselheem-middenblauw transition-colors">
-                  Kies Groepsontwikkelgesprek
+                  Meld je aan
                 </Button>
               </Card>
             </Link>
@@ -46,13 +46,13 @@ export function TypeSelector() {
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-ijsselheem-donkerblauw mb-4">
-                  Inloopgesprek
+                  Ontwikkelgesprek – spelwerkvorm (individueel)
                 </h2>
                 <p className="text-ijsselheem-donkerblauw mb-6 flex-grow">
-                  Meld je aan voor een inloopgesprek
+                  Ga actief en in beweging in gesprek over jouw ontwikkeling.
                 </p>
                 <Button className="w-full bg-ijsselheem-olijfgroen text-white hover:bg-ijsselheem-donkerblauw transition-colors">
-                  Kies Inloopgesprek
+                  Meld je aan
                 </Button>
               </Card>
             </Link>
@@ -67,13 +67,13 @@ export function TypeSelector() {
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold text-ijsselheem-donkerblauw mb-4">
-                  Individueel gesprek
+                  Individueel ontwikkelgesprek
                 </h2>
                 <p className="text-ijsselheem-donkerblauw mb-6 flex-grow">
                   Vraag een individueel ontwikkelgesprek aan met een collega
                 </p>
                 <Button className="w-full bg-ijsselheem-middenblauw text-white hover:bg-ijsselheem-donkerblauw transition-colors">
-                  Kies Individueel gesprek
+                  Meld je aan
                 </Button>
               </Card>
             </Link>

@@ -34,4 +34,20 @@ export function isWithinCutoff(sessionDate: string, sessionTime: string, cutoffH
   return now < cutoffTime
 }
 
+// Check if conversation type supports ICS calendar download
+export function supportsICSDownload(conversationTypeName: string | undefined): boolean {
+  if (!conversationTypeName) return false
+  return conversationTypeName === 'groepsontwikkelgesprek' || 
+         conversationTypeName === 'inloopgesprek'
+}
+
+// Format conversation type name for display
+export function formatConversationTypeName(name: string | undefined): string {
+  if (!name) return 'Onbekend'
+  if (name === 'individueel gesprek') return 'Individueel ontwikkelgesprek'
+  if (name === 'groepsontwikkelgesprek') return 'Ontwikkelgesprek in groepsvorm'
+  if (name === 'inloopgesprek') return 'Ontwikkelgesprek – spelwerkvorm (individueel)'
+  return name
+}
+
 

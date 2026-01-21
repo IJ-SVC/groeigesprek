@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/shared/Card'
 import { Button } from '@/components/shared/Button'
 import Link from 'next/link'
-import { formatDate, formatTime } from '@/lib/utils'
+import { formatDate, formatTime, supportsICSDownload } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -41,6 +41,7 @@ export default async function BevestigingPage({
   const session = registration.session
   const cutoffHours = 2 // Default, could be fetched from settings
   const canCancel = new Date(`${session.date}T${session.start_time}`) > new Date(Date.now() + cutoffHours * 60 * 60 * 1000)
+  const canDownloadICS = supportsICSDownload(session.conversation_type?.name)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-ijsselheem-lichtblauw to-white">
@@ -88,6 +89,18 @@ export default async function BevestigingPage({
               <Link href={`/${session.conversation_type?.name || ''}`}>
                 <Button variant="secondary">Terug naar overzicht</Button>
               </Link>
+              {canDownloadICS && (
+                <a 
+                  href={`/api/ics/${session.id}`}
+                  download
+                  className="font-semibold py-2 px-4 rounded-lg transition-opacity hover:opacity-90 bg-ijsselheem-lichtblauw text-ijsselheem-donkerblauw inline-flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Download agenda bestand
+                </a>
+              )}
               {canCancel && registration.cancellation_token && (
                 <Link href={`/annuleren/${registration.cancellation_token}`}>
                   <Button variant="secondary">Annuleer inschrijving</Button>

@@ -1,6 +1,6 @@
 # Groeigesprekken Aanmeldsysteem
 
-Aanmeldsysteem voor groepsontwikkelgesprekken en inloopgesprekken bij IJsselheem.
+Aanmeldsysteem voor ontwikkelgesprekken in groepsvorm en ontwikkelgesprekken – spelwerkvorm (individueel) bij IJsselheem.
 
 ## Technologie Stack
 

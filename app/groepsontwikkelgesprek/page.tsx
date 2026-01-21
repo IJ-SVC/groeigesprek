@@ -73,16 +73,16 @@ export default async function GroepsontwikkelgesprekPage() {
 
           <Card className="mb-8">
             <h1 className="text-4xl font-extrabold text-ijsselheem-donkerblauw mb-4">
-              Groepsontwikkelgesprek
+              Ontwikkelgesprek in groepsvorm
             </h1>
             <p className="text-lg text-ijsselheem-donkerblauw">
-              Kies een sessie om je aan te melden
+              Ga samen met collega&apos;s in gesprek en leer van elkaar. Kies een geschikte tijd en locatie en meld je aan.
             </p>
           </Card>
 
           <SessionList
             sessions={sessionsWithCounts}
-            conversationTypeName="Groepsontwikkelgesprek"
+            conversationTypeName="Ontwikkelgesprek in groepsvorm"
           />
         </div>
       </div>
