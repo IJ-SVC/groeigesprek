@@ -16,16 +16,30 @@ export async function GET(request: Request) {
 
     const supabase = await createClient()
 
+    // Get conversation types that require registration (exclude individual conversations)
+    const { data: conversationTypes } = await supabase
+      .from('conversation_types')
+      .select('id')
+      .neq('name', 'individueel gesprek')
+
+    const conversationTypeIds = conversationTypes?.map(ct => ct.id) || []
+
     let query = supabase
       .from('sessions_groeigesprek')
       .select(`
         *,
         conversation_type:conversation_types(*)
       `)
+      .in('conversation_type_id', conversationTypeIds.length > 0 ? conversationTypeIds : ['00000000-0000-0000-0000-000000000000'])
       .order('date', { ascending: true })
       .order('start_time', { ascending: true })
 
     if (type) {
+      // Don't allow filtering by individual conversation type
+      if (type === 'individueel gesprek') {
+        return NextResponse.json([], { status: 200 })
+      }
+
       const { data: conversationType } = await supabase
         .from('conversation_types')
         .select('id')

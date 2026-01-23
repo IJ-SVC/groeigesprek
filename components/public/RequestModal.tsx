@@ -182,7 +182,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
 
               <div className="flex gap-4 pt-4">
                 <Button type="submit" disabled={isSubmitting} className="flex-1">
-                  {isSubmitting ? 'Bezig...' : 'Verzenden'}
+                  {isSubmitting ? 'Bezig...' : 'Aanvragen'}
                 </Button>
                 <Button
                   type="button"

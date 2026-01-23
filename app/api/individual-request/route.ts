@@ -116,8 +116,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: insertError.message }, { status: 500 })
     }
 
-    // Create registration if we have requester email, name, and a session
-    if (validated.requester_email && validated.requester_name && individualSession) {
+    // Create registration if we have requester name and a session
+    // Email is optional for individual conversations
+    if (validated.requester_name && individualSession) {
       const cancellationToken = Math.random().toString(36).substring(2, 15) + 
                                 Math.random().toString(36).substring(2, 15)
 
@@ -125,7 +126,7 @@ export async function POST(request: Request) {
         .from('registrations_groeigesprek')
         .insert({
           session_id: individualSession.id,
-          email: validated.requester_email,
+          email: validated.requester_email || null, // NULL if no email provided
           name: validated.requester_name,
           department: 'Individueel ontwikkelgesprek', // Default department for individual conversations
           cancellation_token: cancellationToken,

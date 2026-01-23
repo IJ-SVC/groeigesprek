@@ -17,6 +17,10 @@ export function SessionTable({ sessions }: SessionTableProps) {
   const [filterStatus, setFilterStatus] = useState<string>('all')
 
   const filtered = sessions.filter((session) => {
+    // Exclude individual conversations
+    if (session.conversation_type?.name === 'individueel gesprek') {
+      return false
+    }
     if (filterType !== 'all' && session.conversation_type?.name !== filterType) {
       return false
     }
@@ -73,7 +77,6 @@ export function SessionTable({ sessions }: SessionTableProps) {
               <option value="all">Alle types</option>
               <option value="groepsontwikkelgesprek">Ontwikkelgesprek in groepsvorm</option>
               <option value="inloopgesprek">Ontwikkelgesprek – spelwerkvorm (individueel)</option>
-              <option value="individueel gesprek">Individueel ontwikkelgesprek</option>
             </select>
           </div>
           <div>

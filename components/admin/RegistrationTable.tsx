@@ -160,7 +160,7 @@ export function RegistrationTable({ registrations, sessions }: RegistrationTable
                       'Onbekend'
                     )}
                   </td>
-                  <td className="py-3 px-4 text-sm">{reg.email}</td>
+                  <td className="py-3 px-4 text-sm">{reg.email || '-'}</td>
                   <td className="py-3 px-4 text-sm">{reg.name}</td>
                   <td className="py-3 px-4 text-sm">{reg.department}</td>
                   <td className="py-3 px-4">{statusBadge(reg.status)}</td>

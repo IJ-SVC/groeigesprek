@@ -11,12 +11,21 @@ export const dynamic = 'force-dynamic'
 export default async function SessiesPage() {
   const supabase = await createClient()
 
+  // Get conversation types that require registration (exclude individual conversations)
+  const { data: conversationTypes } = await supabase
+    .from('conversation_types')
+    .select('id')
+    .neq('name', 'individueel gesprek')
+
+  const conversationTypeIds = conversationTypes?.map(ct => ct.id) || []
+
   const { data: sessions } = await supabase
     .from('sessions_groeigesprek')
     .select(`
       *,
       conversation_type:conversation_types(*)
     `)
+    .in('conversation_type_id', conversationTypeIds.length > 0 ? conversationTypeIds : ['00000000-0000-0000-0000-000000000000'])
     .order('date', { ascending: true })
     .order('start_time', { ascending: true })
 
