@@ -12,7 +12,6 @@ interface RequestModalProps {
 
 export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) {
   const [requesterName, setRequesterName] = useState('')
-  const [requesterEmail, setRequesterEmail] = useState('')
   const [message, setMessage] = useState('Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,11 +40,6 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
       
       if (requesterName) {
         emailBody += `Met vriendelijke groet,\n${requesterName}`
-        if (requesterEmail) {
-          emailBody += `\n${requesterEmail}`
-        }
-      } else if (requesterEmail) {
-        emailBody += `Met vriendelijke groet,\n${requesterEmail}`
       } else {
         emailBody += 'Met vriendelijke groet'
       }
@@ -70,7 +64,6 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
           body: JSON.stringify({
             colleague_id: colleague.id,
             requester_name: requesterName || undefined,
-            requester_email: requesterEmail || undefined,
             message: message.trim(),
           }),
         })
@@ -91,7 +84,6 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
         onClose()
         setSuccess(false)
         setRequesterName('')
-        setRequesterEmail('')
         setMessage('Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.')
       }, 3000)
     } catch (err) {
@@ -106,7 +98,6 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
       setError(null)
       setSuccess(false)
       setRequesterName('')
-      setRequesterEmail('')
       setMessage('Ik wil graag een ontwikkelgesprek met jou inplannen.')
     }
   }
@@ -164,7 +155,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
 
               <div>
                 <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
-                  Jouw naam (optioneel)
+                  Jouw naam
                 </label>
                 <input
                   type="text"
@@ -173,22 +164,6 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
                   className="ijsselheem-input w-full"
                   placeholder="Jouw naam"
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
-                  Jouw email (optioneel)
-                </label>
-                <input
-                  type="email"
-                  value={requesterEmail}
-                  onChange={(e) => setRequesterEmail(e.target.value)}
-                  className="ijsselheem-input w-full"
-                  placeholder="jouw.email@ijsselheem.nl"
-                />
-                <p className="text-xs text-gray-600 mt-1">
-                  Als je je email invult, kan {colleague.name} direct op je aanvraag reageren.
-                </p>
               </div>
 
               <div>

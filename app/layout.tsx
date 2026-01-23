@@ -10,7 +10,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Groeigesprekken - IJsselheem",
+  title: "Ontwikkelgesprekken - IJsselheem",
   description: "Aanmeldsysteem voor ontwikkelgesprekken in groepsvorm en ontwikkelgesprekken – spelwerkvorm (individueel)",
 };
 

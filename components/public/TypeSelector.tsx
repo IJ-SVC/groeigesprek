@@ -8,7 +8,7 @@ export function TypeSelector() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-extrabold text-ijsselheem-donkerblauw mb-4 text-center">
-            Groeigesprekken
+            Ontwikkelgesprekken
           </h1>
           <p className="text-lg text-ijsselheem-donkerblauw mb-12 text-center">
             Kies het type gesprek waarvoor je je wilt aanmelden
