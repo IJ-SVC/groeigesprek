@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-import { sendIndividualRequestEmail } from '@/lib/email'
 import { z } from 'zod'
 
 const individualRequestSchema = z.object({
@@ -138,18 +137,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Send email to colleague (optional, won't fail if email fails)
-    if (requestData) {
-      sendIndividualRequestEmail(
-        colleague.email,
-        {
-          colleague_name: colleague.name,
-          requester_name: validated.requester_name,
-          requester_email: validated.requester_email,
-          message: validated.message,
-        }
-      ).catch((err) => console.error('Email sending failed:', err))
-    }
+    // Note: Email is now sent via mailto: link from the client
+    // No server-side email sending needed
 
     return NextResponse.json(requestData, { status: 201 })
   } catch (error: any) {

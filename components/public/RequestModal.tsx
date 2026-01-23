@@ -20,31 +20,70 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
 
   if (!isOpen) return null
 
+  const generateMailtoLink = (
+    email: string,
+    subject: string,
+    body: string
+  ): string => {
+    const encodedSubject = encodeURIComponent(subject)
+    const encodedBody = encodeURIComponent(body)
+    return `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/individual-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          colleague_id: colleague.id,
-          requester_name: requesterName || undefined,
-          requester_email: requesterEmail || undefined,
-          message: message.trim(),
-        }),
-      })
+      // Generate email body
+      let emailBody = `Beste ${colleague.name},\n\n${message.trim()}\n\n`
+      
+      if (requesterName) {
+        emailBody += `Met vriendelijke groet,\n${requesterName}`
+        if (requesterEmail) {
+          emailBody += `\n${requesterEmail}`
+        }
+      } else if (requesterEmail) {
+        emailBody += `Met vriendelijke groet,\n${requesterEmail}`
+      } else {
+        emailBody += 'Met vriendelijke groet'
+      }
 
-      const data = await response.json()
+      // Generate and open mailto link
+      const mailtoLink = generateMailtoLink(
+        colleague.email,
+        'Aanvraag voor ontwikkelgesprek',
+        emailBody
+      )
 
-      if (!response.ok) {
-        setError(data.error || 'Er is een fout opgetreden bij het verzenden van de aanvraag.')
-        setIsSubmitting(false)
-        return
+      // Open mailto link (this will open the default email client)
+      window.location.href = mailtoLink
+
+      // Also save the request to the database for tracking
+      try {
+        const response = await fetch('/api/individual-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            colleague_id: colleague.id,
+            requester_name: requesterName || undefined,
+            requester_email: requesterEmail || undefined,
+            message: message.trim(),
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          // Log error but don't show it to user since mailto already opened
+          console.error('Error saving request to database:', data.error)
+        }
+      } catch (dbErr) {
+        // Log error but don't show it to user since mailto already opened
+        console.error('Error saving request to database:', dbErr)
       }
 
       setSuccess(true)
@@ -54,7 +93,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
         setRequesterName('')
         setRequesterEmail('')
         setMessage('Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.')
-      }, 2000)
+      }, 3000)
     } catch (err) {
       setError('Er is een fout opgetreden. Probeer het opnieuw.')
       setIsSubmitting(false)
@@ -109,10 +148,10 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
                 </svg>
               </div>
               <p className="text-lg font-semibold text-ijsselheem-donkerblauw">
-                Aanvraag succesvol verzonden!
+                Outlook wordt geopend
               </p>
               <p className="text-ijsselheem-donkerblauw mt-2">
-                {colleague.name} heeft een email ontvangen met je aanvraag.
+                Je e-mailclient (Outlook) is geopend met een vooringevulde e-mail naar {colleague.name}. Verstuur de e-mail om je aanvraag te voltooien.
               </p>
             </div>
           ) : (
