@@ -33,9 +33,6 @@ export async function AdminNav() {
               <Link href="/admin/colleagues" className="hover:text-ijsselheem-lichtblauw transition-colors">
                 Collega&apos;s
               </Link>
-              <Link href="/admin/instellingen" className="hover:text-ijsselheem-lichtblauw transition-colors">
-                Instellingen
-              </Link>
             </div>
           </div>
           <div className="flex items-center space-x-4">
