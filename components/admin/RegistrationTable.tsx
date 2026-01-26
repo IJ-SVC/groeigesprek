@@ -21,7 +21,7 @@ export function RegistrationTable({ registrations, sessions }: RegistrationTable
 
   const filtered = registrations.filter((reg) => {
     const conversationTypeName = reg.session?.conversation_type?.name
-    if (filterType !== 'all' && typeof conversationTypeName === 'string' && conversationTypeName !== filterType) {
+    if (filterType !== 'all' && conversationTypeName != null && conversationTypeName !== filterType) {
       return false
     }
     if (filterStatus !== 'all' && reg.status !== filterStatus) {
@@ -68,7 +68,7 @@ export function RegistrationTable({ registrations, sessions }: RegistrationTable
   }
 
   const formatConversationTypeName = (name: string | undefined): string => {
-    if (!name || typeof name !== 'string') return 'Onbekend'
+    if (!name) return 'Onbekend'
     if (name === 'individueel gesprek') return 'Individueel ontwikkelgesprek'
     if (name === 'groepsontwikkelgesprek') return 'Ontwikkelgesprek in groepsvorm'
     if (name === 'inloopgesprek') return 'Ontwikkelgesprek – spelwerkvorm (individueel)'

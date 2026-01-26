@@ -19,10 +19,11 @@ export function SessionTable({ sessions }: SessionTableProps) {
   const filtered = sessions.filter((session) => {
     // Exclude individual conversations
     const conversationTypeName = session.conversation_type?.name
-    if (typeof conversationTypeName === 'string' && conversationTypeName === 'individueel gesprek') {
+    // Type assertion needed because 'individueel gesprek' is not in ConversationType union
+    if (conversationTypeName != null && (conversationTypeName as string) === 'individueel gesprek') {
       return false
     }
-    if (filterType !== 'all' && typeof conversationTypeName === 'string' && conversationTypeName !== filterType) {
+    if (filterType !== 'all' && conversationTypeName != null && conversationTypeName !== filterType) {
       return false
     }
     if (filterStatus !== 'all' && session.status !== filterStatus) {
@@ -45,7 +46,7 @@ export function SessionTable({ sessions }: SessionTableProps) {
   }
 
   const formatConversationTypeName = (name: string | undefined): string => {
-    if (!name || typeof name !== 'string') return 'Onbekend'
+    if (!name) return 'Onbekend'
     if (name === 'individueel gesprek') return 'Individueel ontwikkelgesprek'
     if (name === 'groepsontwikkelgesprek') return 'Ontwikkelgesprek in groepsvorm'
     if (name === 'inloopgesprek') return 'Ontwikkelgesprek – spelwerkvorm (individueel)'
