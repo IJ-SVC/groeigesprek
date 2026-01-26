@@ -15,6 +15,27 @@ export function TypeSelector() {
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
+            <Link href="/individueel-gesprek" className="group">
+              <Card className="text-center h-full flex flex-col hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-ijsselheem-middenblauw">
+                <div className="mb-6 flex justify-center">
+                  <div className="w-20 h-20 rounded-full bg-ijsselheem-middenblauw flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold text-ijsselheem-donkerblauw mb-4">
+                  Individueel ontwikkelgesprek
+                </h2>
+                <p className="text-ijsselheem-donkerblauw mb-6 flex-grow">
+                  Vraag een individueel ontwikkelgesprek aan met een collega
+                </p>
+                <Button className="w-full bg-ijsselheem-middenblauw text-white hover:bg-ijsselheem-donkerblauw transition-colors">
+                  Meld je aan
+                </Button>
+              </Card>
+            </Link>
+
             <Link href="/groepsontwikkelgesprek" className="group">
               <Card className="text-center h-full flex flex-col hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-ijsselheem-accentblauw">
                 <div className="mb-6 flex justify-center">
@@ -52,27 +73,6 @@ export function TypeSelector() {
                   Ga actief en in beweging in gesprek over jouw ontwikkeling.
                 </p>
                 <Button className="w-full bg-ijsselheem-olijfgroen text-white hover:bg-ijsselheem-donkerblauw transition-colors">
-                  Meld je aan
-                </Button>
-              </Card>
-            </Link>
-
-            <Link href="/individueel-gesprek" className="group">
-              <Card className="text-center h-full flex flex-col hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-t-4 border-ijsselheem-middenblauw">
-                <div className="mb-6 flex justify-center">
-                  <div className="w-20 h-20 rounded-full bg-ijsselheem-middenblauw flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                </div>
-                <h2 className="text-2xl font-bold text-ijsselheem-donkerblauw mb-4">
-                  Individueel ontwikkelgesprek
-                </h2>
-                <p className="text-ijsselheem-donkerblauw mb-6 flex-grow">
-                  Vraag een individueel ontwikkelgesprek aan met een collega
-                </p>
-                <Button className="w-full bg-ijsselheem-middenblauw text-white hover:bg-ijsselheem-donkerblauw transition-colors">
                   Meld je aan
                 </Button>
               </Card>

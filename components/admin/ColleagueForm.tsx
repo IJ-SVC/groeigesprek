@@ -15,6 +15,7 @@ export function ColleagueForm({ colleague }: ColleagueFormProps) {
     name: colleague?.name || '',
     email: colleague?.email || '',
     photo_url: colleague?.photo_url || '',
+    function: colleague?.function || '',
     is_active: colleague?.is_active ?? true,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -143,6 +144,21 @@ export function ColleagueForm({ colleague }: ColleagueFormProps) {
         />
         {errors.email && (
           <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
+          Functie
+        </label>
+        <input
+          type="text"
+          value={formData.function}
+          onChange={(e) => setFormData({ ...formData, function: e.target.value })}
+          className="ijsselheem-input w-full"
+        />
+        {errors.function && (
+          <p className="text-red-600 text-sm mt-1">{errors.function}</p>
         )}
       </div>
 

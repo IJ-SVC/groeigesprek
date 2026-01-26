@@ -70,6 +70,11 @@ export function ColleaguesList({ colleagues }: ColleaguesListProps) {
             <h3 className="text-lg font-semibold text-ijsselheem-donkerblauw">
               {colleague.name}
             </h3>
+            {colleague.function && (
+              <p className="text-sm text-ijsselheem-donkerblauw mt-1">
+                {colleague.function}
+              </p>
+            )}
           </Card>
         ))}
       </div>

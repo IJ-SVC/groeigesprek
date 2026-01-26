@@ -64,7 +64,10 @@ export function ColleaguesTable({ colleagues }: ColleaguesTableProps) {
                 Naam
               </th>
               <th className="py-3 px-4 text-left text-sm font-semibold text-ijsselheem-donkerblauw">
-                Email
+                Functie
+              </th>
+              <th className="py-3 px-4 text-left text-sm font-semibold text-ijsselheem-donkerblauw">
+                E-mail
               </th>
               <th className="py-3 px-4 text-left text-sm font-semibold text-ijsselheem-donkerblauw">
                 Status
@@ -104,6 +107,9 @@ export function ColleaguesTable({ colleagues }: ColleaguesTableProps) {
                 </td>
                 <td className="py-3 px-4 text-sm font-semibold text-ijsselheem-donkerblauw">
                   {colleague.name}
+                </td>
+                <td className="py-3 px-4 text-sm text-ijsselheem-donkerblauw">
+                  {colleague.function || '-'}
                 </td>
                 <td className="py-3 px-4 text-sm text-ijsselheem-donkerblauw">
                   {colleague.email}

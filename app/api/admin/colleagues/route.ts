@@ -7,6 +7,7 @@ const colleagueSchema = z.object({
   name: z.string().min(1, 'Naam is verplicht'),
   email: z.string().email('Ongeldig email adres'),
   photo_url: z.string().url().optional().or(z.literal('')),
+  function: z.string().optional().or(z.literal('')),
   is_active: z.boolean().default(true),
 })
 
@@ -54,6 +55,7 @@ export async function POST(request: Request) {
         name: validated.name,
         email: validated.email,
         photo_url: validated.photo_url || null,
+        function: validated.function || null,
         is_active: validated.is_active,
       })
       .select()
@@ -110,6 +112,7 @@ export async function PUT(request: Request) {
       .update({
         ...validated,
         photo_url: validated.photo_url || null,
+        function: validated.function || null,
       })
       .eq('id', id)
       .select()
