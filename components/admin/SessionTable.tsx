@@ -18,10 +18,11 @@ export function SessionTable({ sessions }: SessionTableProps) {
 
   const filtered = sessions.filter((session) => {
     // Exclude individual conversations
-    if (session.conversation_type?.name === 'individueel gesprek') {
+    const conversationTypeName = session.conversation_type?.name
+    if (typeof conversationTypeName === 'string' && conversationTypeName === 'individueel gesprek') {
       return false
     }
-    if (filterType !== 'all' && session.conversation_type?.name !== filterType) {
+    if (filterType !== 'all' && conversationTypeName !== filterType) {
       return false
     }
     if (filterStatus !== 'all' && session.status !== filterStatus) {

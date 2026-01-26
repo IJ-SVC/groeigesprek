@@ -20,7 +20,8 @@ export function RegistrationTable({ registrations, sessions }: RegistrationTable
   const [deleting, setDeleting] = useState<string | null>(null)
 
   const filtered = registrations.filter((reg) => {
-    if (filterType !== 'all' && reg.session?.conversation_type?.name !== filterType) {
+    const conversationTypeName = reg.session?.conversation_type?.name
+    if (filterType !== 'all' && typeof conversationTypeName === 'string' && conversationTypeName !== filterType) {
       return false
     }
     if (filterStatus !== 'all' && reg.status !== filterStatus) {
