@@ -58,9 +58,10 @@ export async function GET(request: Request) {
     // Filter by type if specified (in memory)
     let filtered = registrations
     if (type && registrations) {
-      filtered = registrations.filter(
-        (reg) => reg.session?.conversation_type?.name === type
-      )
+      filtered = registrations.filter((reg) => {
+        const conversationTypeName = reg.session?.conversation_type?.name
+        return typeof conversationTypeName === 'string' && conversationTypeName === type
+      })
     }
 
     return NextResponse.json(filtered)
