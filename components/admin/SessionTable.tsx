@@ -160,7 +160,7 @@ export function SessionTable({ sessions }: SessionTableProps) {
                   </td>
                   <td className="py-3 px-4 text-sm align-top" title={`${formatDate(session.date)} ${formatTime(session.start_time)}${session.end_time ? ` - ${formatTime(session.end_time)}` : ''}`}>
                     <span className="block">{formatDateShort(session.date)}</span>
-                    <span className="text-gray-600 text-xs">{formatTimeRange(session.start_time, session.end_time)}</span>
+                    <span className="text-gray-600 text-xs">{formatTimeRange(session.start_time, session.end_time ?? null)}</span>
                   </td>
                   <td className="py-3 px-4 text-sm truncate" title={session.is_online ? 'Online (Teams)' : session.location || ''}>
                     {session.is_online ? 'Online (Teams)' : session.location}
