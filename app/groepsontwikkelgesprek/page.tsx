@@ -83,6 +83,7 @@ export default async function GroepsontwikkelgesprekPage() {
           <SessionList
             sessions={sessionsWithCounts}
             conversationTypeName="Ontwikkelgesprek in groepsvorm"
+            showLocationFilter
           />
         </div>
       </div>
