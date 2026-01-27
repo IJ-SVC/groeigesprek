@@ -51,6 +51,18 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
     }
   }
 
+  // Normalize time to HH:MM (API expects this; DB may return HH:MM:SS)
+  const toHHMM = (t: string | undefined): string | undefined => {
+    if (!t || !String(t).trim()) return undefined
+    const parts = String(t).trim().split(':')
+    if (parts.length >= 2) {
+      const h = (parts[0] ?? '00').padStart(2, '0')
+      const m = (parts[1] ?? '00').padStart(2, '0')
+      return `${h}:${m}`
+    }
+    return undefined
+  }
+
   // Convert date string (YYYY-MM-DD) to Date object
   const parseDateString = (dateString: string): Date | null => {
     if (!dateString) return null
@@ -141,17 +153,17 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
         : '/api/admin/sessions'
       const method = session ? 'PUT' : 'POST'
 
-      // Prepare data for submission - ensure date is in YYYY-MM-DD format
-      // Convert empty strings to undefined for optional fields
+      // Prepare data for submission - ensure date is in YYYY-MM-DD and times in HH:MM
+      // (DB may return HH:MM:SS; API expects HH:MM)
       const submitData = {
         ...formData,
-        date: formData.date, // Already in YYYY-MM-DD format from handleDateChange
+        date: formData.date,
+        start_time: toHHMM(formData.start_time) ?? formData.start_time,
+        end_time: formData.end_time?.trim() ? toHHMM(formData.end_time.trim()) : undefined,
         max_participants: Number(formData.max_participants) || 10,
         is_online: Boolean(formData.is_online),
-        // Convert empty strings to undefined for optional fields
         teams_link: formData.teams_link?.trim() || undefined,
         facilitator_user_id: formData.facilitator_user_id?.trim() || undefined,
-        end_time: formData.end_time?.trim() || undefined,
         target_audience: formData.target_audience?.trim() || undefined,
         notes: formData.notes?.trim() || undefined,
         instructions: formData.instructions?.trim() || undefined,
@@ -224,7 +236,7 @@ export function SessionForm({ conversationTypes, session }: SessionFormProps) {
           <option value="">Selecteer type</option>
           {conversationTypes.map((type) => (
             <option key={type.id} value={type.id}>
-              {type.name}
+              {type.description ?? type.name}
             </option>
           ))}
         </select>
