@@ -32,7 +32,7 @@ export async function GET(
     const startLocal = toIcsLocal(session.date, session.start_time)
     const endLocal = session.end_time
       ? toIcsLocal(session.date, session.end_time)
-      : toIcsLocal(session.date, session.start_time.replace(/^(\d+):(\d+).*/, (_, h, m) => `${Number(h) + 1}:${m}`)
+      : toIcsLocal(session.date, session.start_time.replace(/^(\d+):(\d+).*/, (_: string, h: string, m: string) => `${Number(h) + 1}:${m}`))
 
     // Format description with proper escaping for ICS
     const descriptionParts = [
