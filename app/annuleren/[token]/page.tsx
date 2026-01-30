@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/shared/Card'
 import { Button } from '@/components/shared/Button'
-import { formatDate, formatTime, isWithinCutoff } from '@/lib/utils'
+import { formatDate, formatTime, formatConversationTypeName, isWithinCutoff } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import { CancelRegistrationForm } from '@/components/public/CancelRegistrationForm'
 import Link from 'next/link'
@@ -83,7 +83,7 @@ export default async function AnnulerenPage({
                 Sessie details
               </h2>
               <div className="text-sm text-ijsselheem-donkerblauw space-y-1">
-                <p><strong>Gesprekstype:</strong> {session.conversation_type?.name || 'Gesprek'}</p>
+                <p><strong>Gesprekstype:</strong> {formatConversationTypeName(session.conversation_type?.name) || 'Gesprek'}</p>
                 <p><strong>Datum:</strong> {formatDate(session.date)}</p>
                 <p><strong>Tijd:</strong> {formatTime(session.start_time)}
                   {session.end_time && ` - ${formatTime(session.end_time)}`}

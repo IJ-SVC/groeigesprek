@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Session } from '@/types'
 import { Button } from '@/components/shared/Button'
 import { Card } from '@/components/shared/Card'
-import { formatDate, formatTime } from '@/lib/utils'
+import { formatDate, formatTime, formatConversationTypeName } from '@/lib/utils'
 
 interface RegistrationFormProps {
   session: Session & { conversation_type?: { name: string } }
@@ -58,7 +58,7 @@ export function RegistrationForm({ session }: RegistrationFormProps) {
   return (
     <Card>
       <h2 className="text-2xl font-bold text-ijsselheem-donkerblauw mb-4">
-        Inschrijven voor {session.conversation_type?.name || 'gesprek'}
+        Inschrijven voor {formatConversationTypeName(session.conversation_type?.name) || 'gesprek'}
       </h2>
 
       <div className="mb-6 p-4 bg-ijsselheem-lichtblauw rounded-lg">

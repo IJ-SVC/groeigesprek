@@ -23,11 +23,16 @@ export async function GET(
       return NextResponse.json({ error: 'Sessie niet gevonden' }, { status: 404 })
     }
 
-    // Create ICS content
-    const startDateTime = new Date(`${session.date}T${session.start_time}`)
-    const endDateTime = session.end_time
-      ? new Date(`${session.date}T${session.end_time}`)
-      : new Date(startDateTime.getTime() + 60 * 60 * 1000) // Default 1 hour
+    // Build local time strings (Europe/Amsterdam) so .ics shows correct time regardless of server timezone
+    const toIcsLocal = (dateStr: string, timeStr: string) => {
+      const [h, m] = timeStr.split(':')
+      const hm = `${(h || '00').padStart(2, '0')}${(m || '00').padStart(2, '0')}00`
+      return `${dateStr.replace(/-/g, '')}T${hm}`
+    }
+    const startLocal = toIcsLocal(session.date, session.start_time)
+    const endLocal = session.end_time
+      ? toIcsLocal(session.date, session.end_time)
+      : toIcsLocal(session.date, session.start_time.replace(/^(\d+):(\d+).*/, (_, h, m) => `${Number(h) + 1}:${m}`)
 
     // Format description with proper escaping for ICS
     const descriptionParts = [
@@ -55,8 +60,8 @@ export async function GET(
       'BEGIN:VEVENT',
       `UID:${session.id}@groeigesprekken.ijsselheem.nl`,
       `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
-      `DTSTART:${startDateTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
-      `DTEND:${endDateTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+      `DTSTART;TZID=Europe/Amsterdam:${startLocal}`,
+      `DTEND;TZID=Europe/Amsterdam:${endLocal}`,
       organizerLine,
       `SUMMARY:${summary}`,
       `DESCRIPTION:${description}`,
