@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/shared/Card'
 import { Button } from '@/components/shared/Button'
 import Link from 'next/link'
-import { formatDate, formatTime, supportsICSDownload } from '@/lib/utils'
+import { formatDate, formatTime, formatConversationTypeName, supportsICSDownload } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -99,7 +99,7 @@ export default async function BevestigingPage({
                 Sessie details
               </h2>
               <div className="space-y-2 text-sm text-ijsselheem-donkerblauw">
-                <p><strong>Gesprekstype:</strong> {session.conversation_type?.name || 'Gesprek'}</p>
+                <p><strong>Gesprekstype:</strong> {formatConversationTypeName(session.conversation_type?.name) || 'Gesprek'}</p>
                 <p><strong>Datum:</strong> {formatDate(session.date)}</p>
                 <p><strong>Tijd:</strong> {formatTime(session.start_time)}
                   {session.end_time && ` - ${formatTime(session.end_time)}`}
