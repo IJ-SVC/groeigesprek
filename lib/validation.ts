@@ -4,7 +4,7 @@ export const registrationSchema = z.object({
   email: z.string().email('Ongeldig e-mailadres'),
   sessionId: z.string().uuid('Ongeldige sessie ID'),
   name: z.string().min(2, 'Naam moet minimaal 2 tekens bevatten'),
-  department: z.string().min(2, 'Afdeling moet minimaal 2 tekens bevatten'),
+  department: z.string().min(2, 'Locatie moet minimaal 2 tekens bevatten'),
 })
 
 // Helper to transform empty strings to undefined

@@ -41,17 +41,23 @@ export async function GET(
       .replace(/,/g, '\\,')
       .replace(/;/g, '\\;')
 
+    // Organizer: organization/facilitator so Outlook does not treat the user as organizer (then they can save/add the event)
+    const organizerName = (session.facilitator || 'IJsselheem Groeigesprekken').replace(/[,;]/g, ' ')
+    const organizerEmail = process.env.NEXT_PUBLIC_ICS_ORGANIZER_EMAIL || 'groeigesprekken@ijsselheem.nl'
+    const organizerLine = `ORGANIZER;CN=${organizerName}:mailto:${organizerEmail}`
+
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
       'PRODID:-//IJsselheem//Groeigesprekken//NL',
       'CALSCALE:GREGORIAN',
-      'METHOD:REQUEST',
+      'METHOD:PUBLISH',
       'BEGIN:VEVENT',
       `UID:${session.id}@groeigesprekken.ijsselheem.nl`,
       `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
       `DTSTART:${startDateTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
       `DTEND:${endDateTime.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+      organizerLine,
       `SUMMARY:${summary}`,
       `DESCRIPTION:${description}`,
       `LOCATION:${session.is_online ? 'Online (Teams)' : session.location.replace(/,/g, '\\,').replace(/;/g, '\\;')}`,
