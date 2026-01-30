@@ -7,9 +7,10 @@ import { RequestModal } from './RequestModal'
 
 interface ColleaguesListProps {
   colleagues: Colleague[]
+  mailtoOnly?: boolean
 }
 
-export function ColleaguesList({ colleagues }: ColleaguesListProps) {
+export function ColleaguesList({ colleagues, mailtoOnly = false }: ColleaguesListProps) {
   const [selectedColleague, setSelectedColleague] = useState<Colleague | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -27,7 +28,9 @@ export function ColleaguesList({ colleagues }: ColleaguesListProps) {
     return (
       <Card>
         <p className="text-center text-ijsselheem-donkerblauw py-8">
-          Er zijn momenteel geen collega&apos;s beschikbaar voor individuele gesprekken.
+          {mailtoOnly
+            ? "Geen collega's beschikbaar voor het plannen van een afspraak."
+            : "Er zijn momenteel geen collega's beschikbaar voor individuele gesprekken."}
         </p>
       </Card>
     )
@@ -84,6 +87,7 @@ export function ColleaguesList({ colleagues }: ColleaguesListProps) {
           colleague={selectedColleague}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
+          mailtoOnly={mailtoOnly}
         />
       )}
     </>

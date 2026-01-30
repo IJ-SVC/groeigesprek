@@ -17,6 +17,7 @@ export function ColleagueForm({ colleague }: ColleagueFormProps) {
     photo_url: colleague?.photo_url || '',
     function: colleague?.function || '',
     is_active: colleague?.is_active ?? true,
+    available_for_spelwerkvorm: colleague?.available_for_spelwerkvorm ?? false,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -203,6 +204,20 @@ export function ColleagueForm({ colleague }: ColleagueFormProps) {
           />
           <span className="text-sm font-semibold text-ijsselheem-donkerblauw">
             Actief (zichtbaar voor gebruikers)
+          </span>
+        </label>
+      </div>
+
+      <div>
+        <label className="flex items-center mb-2">
+          <input
+            type="checkbox"
+            checked={formData.available_for_spelwerkvorm}
+            onChange={(e) => setFormData({ ...formData, available_for_spelwerkvorm: e.target.checked })}
+            className="mr-2"
+          />
+          <span className="text-sm font-semibold text-ijsselheem-donkerblauw">
+            Beschikbaar voor aanvraag ontwikkelgesprek – spelwerkvorm (individueel)
           </span>
         </label>
       </div>

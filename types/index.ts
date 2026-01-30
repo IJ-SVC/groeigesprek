@@ -66,6 +66,7 @@ export interface Colleague {
   photo_url?: string
   function?: string
   is_active: boolean
+  available_for_spelwerkvorm?: boolean
   created_at: string
   updated_at: string
 }
