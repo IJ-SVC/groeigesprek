@@ -75,9 +75,12 @@ export default async function InloopgesprekPage() {
             <h1 className="text-4xl font-extrabold text-ijsselheem-donkerblauw mb-4">
               Ontwikkelgesprek – spelwerkvorm (individueel)
             </h1>
-            <p className="text-lg text-ijsselheem-donkerblauw">
+            <p className="text-lg text-ijsselheem-donkerblauw mb-6">
               Ga actief en in beweging in gesprek over jouw ontwikkeling. Kies een geschikte tijd en locatie en meld je aan.
             </p>
+            <Link href="/inloopgesprek/plan-afspraak">
+              <Button>Plan zelf een afspraak</Button>
+            </Link>
           </Card>
 
           <SessionList

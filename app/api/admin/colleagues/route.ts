@@ -9,6 +9,7 @@ const colleagueSchema = z.object({
   photo_url: z.string().url().optional().or(z.literal('')),
   function: z.string().optional().or(z.literal('')),
   is_active: z.boolean().default(true),
+  available_for_spelwerkvorm: z.boolean().default(false),
 })
 
 export async function GET(request: Request) {
@@ -57,6 +58,7 @@ export async function POST(request: Request) {
         photo_url: validated.photo_url || null,
         function: validated.function || null,
         is_active: validated.is_active,
+        available_for_spelwerkvorm: validated.available_for_spelwerkvorm ?? false,
       })
       .select()
       .single()
@@ -111,8 +113,9 @@ export async function PUT(request: Request) {
       .from('colleagues_groeigesprek')
       .update({
         ...validated,
-        photo_url: validated.photo_url || null,
-        function: validated.function || null,
+        photo_url: validated.photo_url ?? undefined,
+        function: validated.function ?? undefined,
+        available_for_spelwerkvorm: validated.available_for_spelwerkvorm ?? undefined,
       })
       .eq('id', id)
       .select()

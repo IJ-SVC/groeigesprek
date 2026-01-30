@@ -8,11 +8,16 @@ interface RequestModalProps {
   colleague: Colleague
   isOpen: boolean
   onClose: () => void
+  mailtoOnly?: boolean
 }
 
-export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) {
+const DEFAULT_MESSAGE = 'Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.'
+const SPELVORM_MESSAGE = 'Ik wil graag een individueel ontwikkelgesprek - spelvorm met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.'
+
+export function RequestModal({ colleague, isOpen, onClose, mailtoOnly = false }: RequestModalProps) {
+  const defaultMessage = mailtoOnly ? SPELVORM_MESSAGE : DEFAULT_MESSAGE
   const [requesterName, setRequesterName] = useState('')
-  const [message, setMessage] = useState('Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.')
+  const [message, setMessage] = useState(defaultMessage)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -54,29 +59,31 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
       // Open mailto link (this will open the default email client)
       window.location.href = mailtoLink
 
-      // Also save the request to the database for tracking
-      try {
-        const response = await fetch('/api/individual-request', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            colleague_id: colleague.id,
-            requester_name: requesterName || undefined,
-            message: message.trim(),
-          }),
-        })
+      // Optionally save the request to the database for tracking (only when not mailtoOnly)
+      if (!mailtoOnly) {
+        try {
+          const response = await fetch('/api/individual-request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              colleague_id: colleague.id,
+              requester_name: requesterName || undefined,
+              message: message.trim(),
+            }),
+          })
 
-        const data = await response.json()
+          const data = await response.json()
 
-        if (!response.ok) {
+          if (!response.ok) {
+            // Log error but don't show it to user since mailto already opened
+            console.error('Error saving request to database:', data.error)
+          }
+        } catch (dbErr) {
           // Log error but don't show it to user since mailto already opened
-          console.error('Error saving request to database:', data.error)
+          console.error('Error saving request to database:', dbErr)
         }
-      } catch (dbErr) {
-        // Log error but don't show it to user since mailto already opened
-        console.error('Error saving request to database:', dbErr)
       }
 
       setSuccess(true)
@@ -84,7 +91,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
         onClose()
         setSuccess(false)
         setRequesterName('')
-        setMessage('Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast.')
+        setMessage(defaultMessage)
       }, 3000)
     } catch (err) {
       setError('Er is een fout opgetreden. Probeer het opnieuw.')
@@ -98,7 +105,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
       setError(null)
       setSuccess(false)
       setRequesterName('')
-      setMessage('Ik wil graag een ontwikkelgesprek met jou inplannen.')
+      setMessage(defaultMessage)
     }
   }
 
@@ -176,7 +183,7 @@ export function RequestModal({ colleague, isOpen, onClose }: RequestModalProps) 
                   className="ijsselheem-input w-full"
                   rows={6}
                   required
-                  placeholder="Ik wil graag een ontwikkelgesprek met je inplannen. Kun je aangeven welke moment voor jou past, zodat we de afspraak kunnen vastleggen? Dank je wel alvast."
+                  placeholder={defaultMessage}
                 />
               </div>
 
