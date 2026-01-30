@@ -61,7 +61,7 @@ export function ParticipantsTable({ registrations, sessionId }: ParticipantsTabl
               Naam
             </th>
             <th className="text-left py-3 px-4 font-semibold text-ijsselheem-donkerblauw">
-              Afdeling
+              Locatie
             </th>
             <th className="text-left py-3 px-4 font-semibold text-ijsselheem-donkerblauw">
               Acties

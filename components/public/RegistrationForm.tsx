@@ -113,14 +113,14 @@ export function RegistrationForm({ session }: RegistrationFormProps) {
 
         <div>
           <label htmlFor="department" className="block text-sm font-semibold text-ijsselheem-donkerblauw mb-2">
-            Afdeling *
+            Locatie *
           </label>
           <input
             type="text"
             id="department"
             value={formData.department}
             onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-            placeholder="bijv. Locatie, afdeling, etc."
+            placeholder="bijv. Locatie of afdeling"
             className="ijsselheem-input w-full"
             required
           />
